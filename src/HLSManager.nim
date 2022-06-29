@@ -48,7 +48,7 @@ proc parseOptions(text: string): seq[Param] =
   return params
 
 
-proc ParseManifest(text: seq[string]): HLSStream =
+proc ParseManifest*(text: seq[string]): HLSStream =
     var stream: HLSStream = HLSStream()
     var i: int = 0
     while i < len(text):
