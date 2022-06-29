@@ -22,6 +22,9 @@ proc parseOptions(text: string): seq[Param] =
   var flag: bool = false
   var params: seq[Param]
   var cParam: Param = Param()
+  if(text[0] != '#'):
+    params.add(Param(key: "URI", value: text))
+    return params
   for i in text.items:
     if(flag == true):
       if(i == ','):
