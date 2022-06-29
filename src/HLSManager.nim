@@ -33,18 +33,20 @@ proc parseOptions(text: string): seq[Param] =
         continue
       charTracker.add(i)
     else:
-      if i == '=':
-        cParam.key = toString(charTracker)
-        newSeq(charTracker, 0)
-        flag = true
-        continue
-      if(i == '\"'):
-        params[len(params) - 1].value = params[len(params) - 1].value & "," & toString(charTracker)
-        newSeq(charTracker, 0)
-        continue
-      if(i == ','):
-        continue
-      charTracker.add(i)
+      case i:
+        of '=':
+          cParam.key = toString(charTracker)
+          newSeq(charTracker, 0)
+          flag = true
+          continue
+        of '\"':
+          params[len(params) - 1].value = params[len(params) - 1].value & "," & toString(charTracker)
+          newSeq(charTracker, 0)
+          continue
+        of ',':
+          continue
+        else:
+          charTracker.add(i)
   return params
 
 
