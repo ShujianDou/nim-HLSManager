@@ -22,9 +22,6 @@ proc parseOptions(text: string): seq[Param] =
   var flag: bool = false
   var params: seq[Param]
   var cParam: Param = Param()
-  if(text[0] != '#'):
-    params.add(Param(key: "URI", value: text))
-    return params
   for i in text.items:
     if(flag == true):
       if(i == ','):
@@ -71,7 +68,13 @@ proc ParseManifest*(text: seq[string]): HLSStream =
 proc ParseManifest*(file: File): HLSStream =
   var stream: HLSStream = HLSStream()
   while file.endOfFile == false:
-    var str: seq[string] = split(file.readLine(), ':')
+    var rStr = file.readLine()
+    var str: seq[string] = split(rStr, ':')
+    if(rStr[0] != '#'):
+      var ba: seq[Param]
+      ba.add(Param(key: "URI", value: rStr))
+      stream.parts.add(Head(header: "URI", values: ba))
+      continue
     if(str[0] == "#EXTM3U"):
       var hParams: seq[Param]
       str = split(file.readLine(), ':')
