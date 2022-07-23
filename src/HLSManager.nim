@@ -2,7 +2,6 @@ import std/[strutils]
 import system/[io]
 import parseUtils
 
-
 type
   Param* = object
     key*: string
@@ -12,6 +11,19 @@ type
     values*: seq[Param]
   HLSStream* = object
     parts*: seq[Head]
+
+# Returns **first** value from key
+method `[]`*(this: Head, key: string): string =
+  for k in this.values:
+    if k.key == key:
+      return k.value
+# Returns **ALL** header objects based on header: string
+method `[]`*(this: HLSStream, header: string): seq[Head] =
+  var hSeq: seq[Head] = @[]
+  for k in this.parts:
+    if k.header == header:
+      hSeq.add(k)
+  return hSeq
 
 proc toString(str: seq[char]): string =
   result = newStringOfCap(len(str))

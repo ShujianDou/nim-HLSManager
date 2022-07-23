@@ -1,6 +1,6 @@
 # Package
 
-version       = "0.1.0"
+version       = "0.1.1"
 author        = "ShujianDou"
 description   = "An HLS manifest manager for anime-dl"
 license       = "Apache-2.0"
