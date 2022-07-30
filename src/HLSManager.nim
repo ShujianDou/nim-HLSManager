@@ -11,6 +11,7 @@ type
     values*: seq[Param]
   HLSStream* = object
     parts*: seq[Head]
+    baseUri*: string
 
 # Returns **first** value from key
 method `[]`*(this: Head, key: string): string =
@@ -73,8 +74,9 @@ proc parseOptions(text: string): seq[Param] =
   return params
 
 
-proc ParseManifest*(text: seq[string]): HLSStream =
+proc ParseManifest*(text: seq[string], baseUri: string = ""): HLSStream =
     var stream: HLSStream = HLSStream()
+    stream.baseUri = baseUri
     var i: int = 0
     while i < len(text):
       if text[i] == "":
@@ -86,7 +88,7 @@ proc ParseManifest*(text: seq[string]): HLSStream =
         continue
       var str: seq[string] = @[text[i][0..id - 1], text[i][id..^1]]
       if(text[i][0] != '#'):
-        stream.parts.add(Head(header: "URI", values: @[Param(key: "URI", value: text[i])]))
+        stream.parts.add(Head(header: "URI", values: @[Param(key: "URI", value: baseUri & text[i])]))
         inc i
         continue
       if(str[0] == "#EXTM3U"):
@@ -97,7 +99,6 @@ proc ParseManifest*(text: seq[string]): HLSStream =
         stream.parts.add(Head(header: str[0], values: parseOptions(str[1])))
       inc i
     return stream
-
 proc ParseManifest*(file: File): HLSStream =
   var stream: HLSStream = HLSStream()
   while file.endOfFile == false:
