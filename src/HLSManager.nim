@@ -84,8 +84,6 @@ proc ParseManifest*(text: seq[string]): HLSStream =
       if id >= len(text[i]):
         inc i
         continue
-      echo id
-      echo text[i]
       var str: seq[string] = @[text[i][0..id - 1], text[i][id..^1]]
       if(text[i][0] != '#'):
         stream.parts.add(Head(header: "URI", values: @[Param(key: "URI", value: text[i])]))
