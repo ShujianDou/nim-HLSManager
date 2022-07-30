@@ -82,15 +82,15 @@ proc ParseManifest*(text: seq[string], baseUri: string = ""): HLSStream =
       if text[i] == "":
         inc i
         continue
+      if(text[i][0] != '#'):
+        stream.parts.add(Head(header: "URI", values: @[Param(key: "URI", value: baseUri & text[i])]))
+        inc i
+        continue
       let id: int = skipUntil(text[i], ':') + 1
       if id >= len(text[i]):
         inc i
         continue
       var str: seq[string] = @[text[i][0..id - 1], text[i][id..^1]]
-      if(text[i][0] != '#'):
-        stream.parts.add(Head(header: "URI", values: @[Param(key: "URI", value: baseUri & text[i])]))
-        inc i
-        continue
       if(str[0] == "#EXTM3U"):
         var hParams: seq[Param]
         hParams.add(Param(key: "version", value: str[^1]))
@@ -103,18 +103,18 @@ proc ParseManifest*(file: File): HLSStream =
   var stream: HLSStream = HLSStream()
   while file.endOfFile == false:
     var rStr = file.readLine()
-    let i: int = skipUntil(rStr, ':') + 1
-    if i >= len(rStr):
-      continue
-    var str: seq[string] = @[rStr[0..i - 1], rStr[i..^1]]
     if(rStr[0] != '#'):
       var ba: seq[Param]
       ba.add(Param(key: "URI", value: rStr))
       stream.parts.add(Head(header: "URI", values: ba))
       continue
+    let i: int = skipUntil(rStr, ':') + 1
+    if i >= len(rStr):
+      continue
+    var str: seq[string] = @[rStr[0..i - 1], rStr[i..^1]]
     if(str[0] == "#EXTM3U"):
       var hParams: seq[Param]
-      str = split(file.readLine(), ':')
+      str = split(rStr, ':')
       hParams.add(Param(key: "version", value: str[^1]))
       stream.parts.add(Head(header: "head", values: hParams))
     else:
