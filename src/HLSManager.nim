@@ -1,4 +1,4 @@
-import std/[strutils]
+import std/[strutils, uri]
 import system/[io]
 import parseUtils
 
@@ -71,6 +71,8 @@ proc parseOptions(text: string): seq[Param] =
       else:
         charTracker.add(text[idx])
     inc idx
+  cParam.value = charTracker.toString()
+  params.add(cParam)
   return params
 
 
@@ -87,6 +89,7 @@ proc ParseManifest*(text: seq[string], baseUri: string = ""): HLSStream =
         let ura = parseUri(text[i])
         if ura.scheme == "":
           strang = baseUri & text[i]
+        else: strang = text[i]
         stream.parts.add(Head(header: "URI", values: @[Param(key: "URI", value: strang)]))
         inc i
         continue
