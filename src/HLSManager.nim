@@ -83,7 +83,11 @@ proc ParseManifest*(text: seq[string], baseUri: string = ""): HLSStream =
         inc i
         continue
       if(text[i][0] != '#'):
-        stream.parts.add(Head(header: "URI", values: @[Param(key: "URI", value: baseUri & text[i])]))
+        var strang: string = ""
+        let ura = parseUri(text[i])
+        if ura.scheme == "":
+          strang = baseUri & text[i]
+        stream.parts.add(Head(header: "URI", values: @[Param(key: "URI", value: strang)]))
         inc i
         continue
       let id: int = skipUntil(text[i], ':') + 1
