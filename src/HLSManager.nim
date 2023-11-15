@@ -1,5 +1,5 @@
 import std/[strutils, uri]
-import system/[io]
+import system
 import parseUtils
 
 type
